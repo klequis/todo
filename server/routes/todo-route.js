@@ -22,6 +22,7 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
+  yellow('get')
   try {
     const todos = await find('todos')
     res.send(todos)

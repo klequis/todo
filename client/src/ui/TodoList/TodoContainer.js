@@ -1,6 +1,7 @@
 import React from "react"
 import { connect } from "react-redux"
 import { getTodosByVisibilityFilter } from "../../redux/selectors/selectors"
+import { getTodos } from '../../redux/actions/actions'
 import TodoList from './TodoList'
 
 // const TodoContainer = ({ todos }) => (
@@ -13,6 +14,21 @@ import TodoList from './TodoList'
 //   </ul>
 // )
 
+class TodoContainer extends React.Component {
+  componentDidMount() {
+    console.log('did mount');
+
+    getTodos()
+  }
+
+  render() {
+
+    return (
+      <TodoList todos={this.props.todos} />
+    )
+  }
+}
+
 const mapStateToProps = state => {
   const { visibilityFilter } = state
   const todos = getTodosByVisibilityFilter(state, visibilityFilter)
@@ -21,4 +37,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(TodoList)
+export default connect(mapStateToProps, getTodos)(TodoContainer)
