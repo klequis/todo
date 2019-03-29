@@ -7,12 +7,21 @@ import { red, yellow } from '../logger'
 
 const router = express.Router()
 
+/*
+    - assumes only { title: string } is sent
+    - { completed: false } will be added to all new todos
+ */
+
 router.post('/', async (req, res) => {
   try {
-    const todo = req.body
+    const td1 = req.body
+    const td2 = {
+      title: td1.title,
+      completed: false,
+    }
     const inserted = await insertOne(
-      'todo-dev',
-      todo
+      'todos',
+      td2
     )
     res.send(inserted)
   } catch (e) {
@@ -60,7 +69,7 @@ router.get('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const id = req.params.id
   try {
-    let todo = await findOneAndDelete('todo-dev', id)
+    let todo = await findOneAndDelete('todos', id)
     if (!todo) {
       return res.status(404).send()
     }
