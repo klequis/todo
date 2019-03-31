@@ -18,7 +18,7 @@ export default {
     async readById(id) {
       pink('api.readById: id', id)
       const data = await fetchJson(
-        `/api/todo/:${id}`,
+        `/api/todo/${id}`,
         {
           method: 'GET',
         }

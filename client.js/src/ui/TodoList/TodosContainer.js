@@ -1,14 +1,14 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { todosReadRequest /*, todosReadByIdRequest*/ } from '../../redux/todo/actions'
+import { todosReadRequest, todosReadByIdRequest } from '../../redux/todo/actions'
 import Todos from './Todos'
 import { getAllTodos } from '../../redux/todo/selectors'
 // import { green } from '../../logger'
 
 class TodoContainer extends React.Component {
   componentDidMount() {
-    todosReadRequest()
-    // todosReadByIdRequest('5c91aeb8e543802dd5579eef')
+    this.props.todosReadRequest()
+    // this.props.todosReadByIdRequest('5c91aeb8e543802dd5579eef')
   }
 
   render() {
@@ -21,7 +21,7 @@ class TodoContainer extends React.Component {
   }
 }
 
-const actions = {todosReadRequest}
+const actions = {todosReadRequest, todosReadByIdRequest}
 
 const mapStateToProps = (state) => {
   return {

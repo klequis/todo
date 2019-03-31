@@ -40,6 +40,19 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/:id', async (req, res) => {
+  yellow('get')
+
+  const id = req.params.id
+  yellow('id', id)
+  try {
+    const todos = await findById('todos', id)
+    res.send(todos)
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
+
 // router.get('/user/:userId', async (req, res) => {
 
 //   try {

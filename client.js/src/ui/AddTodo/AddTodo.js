@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { todoAddRequest } from '../../redux/todo/actions'
+import { todoAddRequest } from 'redux/todo/actions'
 
 
 class AddTodo extends React.Component {

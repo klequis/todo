@@ -3,6 +3,8 @@ import {
   TODOS_READ_KEY
 } from './types'
 
+// import { blue } from 'logger'
+
 export function todosReducer(
   state = [],
   action
@@ -11,9 +13,7 @@ export function todosReducer(
     case TODOS_READ_KEY:
       return action.payload
     case TODO_ADD_KEY:
-      return {
-        todos: [...state, action.payload]
-      }
+      return [...state, action.payload[0]]
     default:
       return state
   }

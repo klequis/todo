@@ -1,6 +1,6 @@
 import * as React from 'react';
-import AddTodo from '../AddTodo'
-import TodoList from '../TodoList'
+import AddTodo from 'ui/AddTodo'
+import TodoList from 'ui/TodoList'
 
 class App extends React.Component {
   render() {

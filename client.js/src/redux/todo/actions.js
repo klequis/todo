@@ -7,7 +7,7 @@ import {
 } from './types'
 import { createRequestThunk } from '../action-helpers'
 import api from '../../api'
-import { orange } from '../../logger'
+import { orange, red } from '../../logger'
 
 // tmp
 
@@ -36,7 +36,7 @@ export const todosRead = (todos) => {
   })
 }
 
-export const todosReadRequest = () => {
+export const todosReadRequest0 = () => {
   return dispatch => {
     const key = TODOS_READ_REQUEST_KEY
     dispatch(requestPending(key))
@@ -51,14 +51,45 @@ export const todosReadRequest = () => {
   }
 }
 
+
+// works well
+// export const todosReadRequest = () => {
+//   return async dispatch => {
+//     const key = TODOS_READ_REQUEST_KEY
+//     await dispatch(requestPending(key))
+//     try {
+//       const data = await api.todos.read()
+//       dispatch(requestSuccess(key))
+//       dispatch(todosRead(data))
+//     }
+//     catch (e) {
+//       dispatch(requestFailed(e, key))
+//     }
+//   }
+// }
+
 // export const todosReadRequest = createRequestThunk({
 //   request: api.todos.read,
 //   key: TODOS_READ_REQUEST_KEY,
 //   success: [todosRead],
-//   failure: [(error) => console.log('(7) todoReadRequestCall: request failed', error)]
+//   failure: [(error) => console.log('(7) todoReadRequest: request failed', error)]
 // })
 
+export const todosReadRequest = createRequestThunk({
+  request: api.todos.read,
+  key: TODOS_READ_REQUEST_KEY,
+  success: [todosRead],
+  failure: [(error) => console.log('(7) todoReadRequest: request failed', error)]
+})
 
+
+
+export const todosReadByIdRequest = createRequestThunk({
+  request: api.todos.readById,
+  key: TODOS_READ_BY_ID_REQUEST_KEY,
+  success: [todosRead],
+  failure: [(error) => red('(7) todoReadByIdRequest: request failed', error)]
+})
 
 // Read by ID
 
@@ -76,23 +107,6 @@ export const todosReadRequest = () => {
 //       })
 //   }
 // }
-
-// const todoReadByIdRequestCall = {
-//   request: api.todos.readById,
-//   key: TODOS_READ_BY_ID_REQUEST_KEY,
-//   success: [todosRead],
-//   failure: [(error) => console.log('todoReadByIdRequestCall: request failed', error)]
-// }
-
-// export const todosReadByIdRequest = createRequestThunk(todoReadByIdRequestCall)
-
-
-
-
-
-
-
-
 
 // Post
 
