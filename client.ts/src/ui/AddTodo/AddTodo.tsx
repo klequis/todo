@@ -2,21 +2,28 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { todoAddRequest } from 'redux/todo/actions'
 
+type TProps = {
+  todoAddRequest: (t: { title: string }) => void
+}
 
-class AddTodo extends React.Component {
+type TState = {
+  inputVal: string
+}
 
-  state = {
+class AddTodo extends React.Component<TProps> {
+
+  state: TState = {
     inputVal: ''
   }
 
-  updateInput = (inputVal) => {
+  updateInput = (inputVal: string) => {
     this.setState({ inputVal })
   }
 
   handleAddTodo = () => {
     const { inputVal } = this.state
     if (inputVal.length > 0) {
-      const t = {
+      const t: { title: string } = {
         title: this.state.inputVal
       }
       this.props.todoAddRequest(t)

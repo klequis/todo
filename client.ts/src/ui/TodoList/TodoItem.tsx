@@ -2,7 +2,7 @@ import * as React from 'react'
 import cx from 'classnames'
 import { Todo } from 'global-types'
 
-const Todo = ({ todo }: { todo: Todo }) => {
+const TodoItem = ({ todo }: { todo: Todo }) => {
   return (
     <li className='todo-item'>
       {todo && todo.completed ? '-' : '+'}{' '}
@@ -18,4 +18,4 @@ const Todo = ({ todo }: { todo: Todo }) => {
   )
 }
 
-export default Todo
+export default TodoItem
