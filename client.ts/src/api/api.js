@@ -1,7 +1,7 @@
 import { fetchJson } from './api-helpers'
 
 // eslint-disable-next-line
-import { pink } from '../logger'
+import { pink } from 'logger'
 
 // Errors are handled by fetchJson()
 export default {

@@ -1,6 +1,6 @@
 /* Dev */
 // eslint-disable-next-line
-import { pink } from '../logger'
+import { pink } from 'logger'
 
 export const fetchJson = (url, options = {}) => {
   // pink('(3) api-helpers.fetchJson()')
