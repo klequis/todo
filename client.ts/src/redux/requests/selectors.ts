@@ -1,14 +1,13 @@
 import { AppState } from 'global-types'
 /* Dev */
 // eslint-disable-next-line
-import { yellow } from 'logger'
+// import { yellow } from 'logger'
 
 const noStatus = {
   status: 'none',
   error: null,
 }
 export const getRequest = (state: AppState, key: string) => {
-  yellow('getRequest: state', state)
   if (state.requests[key] === null) {
     return noStatus
   } else {

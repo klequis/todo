@@ -11,7 +11,7 @@ import api from '../../api'
 // import { red } from '../../logger'
 import { orange } from '../../logger'
 
-export function todoAdd(newTodo: Todo) {
+export const todoAdd = (newTodo: Todo) => {
   orange('todoAdd: todo', newTodo);
 
   return {

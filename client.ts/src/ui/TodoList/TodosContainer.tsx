@@ -32,7 +32,6 @@ class TodoContainer extends React.Component<IProps, []> {
 const actions = {todosReadRequest, todosReadByIdRequest}
 
 const mapStateToProps = (state: AppState) => {
-  console.log('TodosContainer.mstp: state', state)
   return {
     todos: getAllTodos(state),
     todosReadRequestStatus: getRequest(state, TODOS_READ_REQUEST_KEY)
