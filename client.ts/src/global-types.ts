@@ -19,3 +19,8 @@ export type RequestAction = {
   error?: Error | null
   payload?: any
 }
+
+export type AppState = {
+  requests: {}
+  todos: Todo[]
+}

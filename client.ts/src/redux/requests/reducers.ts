@@ -7,7 +7,7 @@ import {
 import { merge } from 'ramda'
 
 export function requestsReducer (
-  state = null,
+  state = {},
   action: RequestAction
   ) {
   switch (action.type) {

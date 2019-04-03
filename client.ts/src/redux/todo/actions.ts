@@ -8,19 +8,7 @@ import {
 import { createRequestThunk } from '../action-helpers'
 import api from '../../api'
 import { orange, red } from '../../logger'
-
-// tmp
-
-// import {
-//   requestPending,
-//   requestSuccess,
-//   requestFailed
-// } from 'redux/requests/actions'
-
 import { Todo, Action } from '../../global-types'
-
-//
-
 
 export const todoAdd = (newTodo: Todo): Action => {
   orange('todoAdd: todo', newTodo);

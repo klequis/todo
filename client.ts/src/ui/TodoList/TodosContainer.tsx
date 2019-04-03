@@ -3,6 +3,9 @@ import { connect } from "react-redux"
 import { todosReadRequest, todosReadByIdRequest } from '../../redux/todo/actions'
 import Todos from './Todos'
 import { getAllTodos } from '../../redux/todo/selectors'
+import { TODOS_READ_REQUEST_KEY } from 'redux/todo/constants'
+import { getRequest } from 'redux/requests/selectors';
+import { AppState } from 'global-types'
 // import { green } from '../../logger'
 
 interface IProps {
@@ -28,9 +31,11 @@ class TodoContainer extends React.Component<IProps, []> {
 
 const actions = {todosReadRequest, todosReadByIdRequest}
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
+  console.log('TodosContainer.mstp: state', state)
   return {
-    todos: getAllTodos(state)
+    todos: getAllTodos(state),
+    todosReadRequestStatus: getRequest(state, TODOS_READ_REQUEST_KEY)
   }
 }
 
