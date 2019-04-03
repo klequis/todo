@@ -9,9 +9,10 @@ interface IProps extends WithStyles<typeof styles> {
   children: React.ReactNode
 }
 
-const App:  React.FunctionComponent<IProps> = ({ classes }) => {
+const App:  React.FunctionComponent<IProps> = (props) => {
 
   // green('props', classes.wrapper)
+  const { classes } = props
   return (
     <div className={classes.wrapper}>
       <AddTodo />
