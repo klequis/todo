@@ -1,0 +1,43 @@
+:root {
+  /* Color system */
+  --color-bg: #f6f3ee;
+  --color-surface: #fffdf9;
+  --color-surface-elevated: #ffffff;
+  --color-border: #d9d2c7;
+  --color-text: #1f2933;
+  --color-text-muted: #52606d;
+
+  /* Brand and state */
+  --color-primary: #0f766e;
+  --color-primary-hover: #0b5f59;
+  --color-focus-ring: #0f766e66;
+  --color-success: #2f855a;
+  --color-danger: #c53030;
+
+  /* Column accents */
+  --color-column-backlog: #7c8aa0;
+  --color-column-today: #d97706;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Typography */
+  --font-family-base: "Ubuntu", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+
+  /* Layout */
+  --board-column-width: 18rem;
+  --content-max-width: 90rem;
+}
