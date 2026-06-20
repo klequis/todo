@@ -9,6 +9,11 @@ interface Props {
   isLast: boolean;
   columnId: "backlog" | "today";
   isEditing: boolean;
+  isDragging: boolean;
+  dropPosition: "before" | "after" | null;
+  onDragStart: () => void;
+  onDragEnd: () => void;
+  onDragOver: (position: "before" | "after") => void;
   onStartEdit: () => void;
   onSaveEdit: (title: string, notes: string) => Promise<SubmitResult>;
   onCancelEdit: () => void;
@@ -19,8 +24,35 @@ interface Props {
 }
 
 export function Card(props: Props) {
+  function handleDragStart(e: DragEvent) {
+    if (props.isEditing) { e.preventDefault(); return; }
+    e.dataTransfer!.effectAllowed = "move";
+    e.dataTransfer!.setData("cardId", String(props.card.id));
+    props.onDragStart();
+  }
+
+  function handleDragOver(e: DragEvent) {
+    if (props.isDragging) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer!.dropEffect = "move";
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    props.onDragOver(e.clientY < rect.top + rect.height / 2 ? "before" : "after");
+  }
+
   return (
-    <div class="card">
+    <div
+      class="card"
+      classList={{
+        "card--dragging": props.isDragging,
+        "card--drop-before": props.dropPosition === "before",
+        "card--drop-after": props.dropPosition === "after",
+      }}
+      draggable="true"
+      onDragStart={handleDragStart}
+      onDragEnd={props.onDragEnd}
+      onDragOver={handleDragOver}
+    >
       <Show
         when={props.isEditing}
         fallback={

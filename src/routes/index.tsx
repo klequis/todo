@@ -21,6 +21,7 @@ export default function Home() {
   const moveCard = useAction(moveCardAction);
 
   const [editingId, setEditingId] = createSignal<number | null>(null);
+  const [draggingCardId, setDraggingCardId] = createSignal<number | null>(null);
 
   async function handleCreate(
     title: string,
@@ -89,6 +90,9 @@ export default function Home() {
                     column={column}
                     otherColumnLength={otherColumn?.cards.length ?? 0}
                     editingId={editingId()}
+                    draggingCardId={draggingCardId()}
+                    onDragStart={(cardId) => setDraggingCardId(cardId)}
+                    onDragEnd={() => setDraggingCardId(null)}
                     onStartEdit={startEdit}
                     onSaveEdit={saveEdit}
                     onCancelEdit={() => setEditingId(null)}

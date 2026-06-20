@@ -273,6 +273,27 @@ textarea[aria-invalid="true"] {
   outline-color: var(--color-danger, #c53030);
 }
 
+.card[draggable="true"] {
+  cursor: grab;
+}
+
+.card--dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.card--drop-before {
+  box-shadow: 0 -3px 0 0 var(--color-primary, #0f766e);
+}
+
+.card--drop-after {
+  box-shadow: 0 3px 0 0 var(--color-primary, #0f766e);
+}
+
+.column.drag-over {
+  background: color-mix(in srgb, var(--color-primary, #0f766e) 6%, var(--color-surface, #fffdf9));
+}
+
 .empty-state {
   margin: 0.4rem 0;
   color: var(--color-text-muted, #52606d);
