@@ -41,7 +41,7 @@
 
 9. Add validation and error display behavior. - **Done**
 
-10. Drag and drop behavior
+10. Drag and drop behavior - **Done**
 - Add drag-and-drop within and across Backlog/Today.
 - Persist new order and column placement through actions.
 - Add visual drop affordances and optimistic UI feedback.
