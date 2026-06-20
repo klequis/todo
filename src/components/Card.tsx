@@ -1,6 +1,6 @@
 import { Show } from "solid-js";
 import type { TodoCard } from "~/lib/queries";
-import { CardForm } from "./CardForm";
+import { CardForm, type SubmitResult } from "./CardForm";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   columnId: "backlog" | "today";
   isEditing: boolean;
   onStartEdit: () => void;
-  onSaveEdit: (title: string, notes: string) => Promise<boolean>;
+  onSaveEdit: (title: string, notes: string) => Promise<SubmitResult>;
   onCancelEdit: () => void;
   onDelete: () => void;
   onMoveUp: () => void;

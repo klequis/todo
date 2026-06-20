@@ -26,13 +26,12 @@ export default function Home() {
     title: string,
     notesMarkdown: string,
     columnId?: "backlog" | "today"
-  ): Promise<boolean> {
+  ) {
     const fd = new FormData();
     fd.set("title", title);
     fd.set("notesMarkdown", notesMarkdown);
     fd.set("columnId", columnId ?? "backlog");
-    const result = await createCard(fd);
-    return result?.ok ?? false;
+    return await createCard(fd) ?? { ok: false as const };
   }
 
   async function handleDelete(id: number) {
@@ -45,16 +44,14 @@ export default function Home() {
     setEditingId(card.id);
   }
 
-  async function saveEdit(id: number, title: string, notes: string): Promise<boolean> {
+  async function saveEdit(id: number, title: string, notes: string) {
     const fd = new FormData();
     fd.set("id", String(id));
     fd.set("title", title);
     fd.set("notesMarkdown", notes);
-    const result = await updateCard(fd);
-    if (result?.ok) {
-      setEditingId(null);
-    }
-    return result?.ok ?? false;
+    const result = await updateCard(fd) ?? { ok: false as const };
+    if (result.ok) setEditingId(null);
+    return result;
   }
 
   async function handleMove(

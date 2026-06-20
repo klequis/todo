@@ -30,7 +30,7 @@
 
 7. Implement CardForm create/edit flows. - **Done**
 
-8. Implement MarkdownRenderer with sanitization.
+8. Implement MarkdownRenderer with sanitization. - **Done**
 - Install `marked` for markdown-to-HTML parsing.
 - Create `src/components/MarkdownRenderer.tsx` with a single `source: string` prop.
 - Parse with `marked.parse()` using `{ async: false }` to get a synchronous string result.
@@ -39,7 +39,7 @@
 - Replace the `<pre>{card.notesMarkdown}</pre>` fallback in `Card.tsx` with `<MarkdownRenderer source={card.notesMarkdown} />`.
 - Add a scoped `.markdown-body` CSS class with basic prose styles (headings, lists, code blocks, links) in `src/styles/variables.css` or a colocated style.
 
-9. Add validation and error display behavior.
+9. Add validation and error display behavior. - **Done**
 
 10. Drag and drop behavior
 - Add drag-and-drop within and across Backlog/Today.

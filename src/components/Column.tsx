@@ -2,13 +2,14 @@ import { For, Show } from "solid-js";
 import type { TodoCard, TodoColumn } from "~/lib/queries";
 import { Card } from "./Card";
 import { ColumnHeader } from "./ColumnHeader";
+import type { SubmitResult } from "./CardForm";
 
 interface Props {
   column: TodoColumn;
   otherColumnLength: number;
   editingId: number | null;
   onStartEdit: (card: TodoCard) => void;
-  onSaveEdit: (id: number, title: string, notes: string) => Promise<boolean>;
+  onSaveEdit: (id: number, title: string, notes: string) => Promise<SubmitResult>;
   onCancelEdit: () => void;
   onDelete: (id: number) => void;
   onMove: (id: number, targetColumnId: "backlog" | "today", targetPosition: number) => void;
