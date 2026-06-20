@@ -1,26 +1,12 @@
-import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
 import "./app.css";
 import "./styles/variables.css";
+import { RootLayout } from "~/components/RootLayout";
 
 export default function App() {
   return (
-    <Router
-      root={props => (
-        <MetaProvider>
-          <Title>Todo</Title>
-          <div class="app-shell">
-            <header class="top-nav">
-              <a href="/">Board</a>
-              <a href="/about">About</a>
-            </header>
-            <Suspense>{props.children}</Suspense>
-          </div>
-        </MetaProvider>
-      )}
-    >
+    <Router root={RootLayout}>
       <FileRoutes />
     </Router>
   );

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Color Palette — Green</title>
+<style>
+  :root {
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-elevated: #ffffff;
+    --color-border: #34d399;
+    --color-text: #111827;
+    --color-text-muted: #6b7280;
+    --color-primary: #059669;
+    --color-primary-hover: #047857;
+    --color-column-today: #f59e0b;
+    --color-column-backlog: #6366f1;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-focus-ring: #05996966;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 2rem;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--color-text);
+    background:
+      radial-gradient(circle at top right, #a7f3d0 0%, transparent 35%),
+      var(--color-bg);
+    min-height: 100vh;
+  }
+
+  h1 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+  .subtitle { margin: 0 0 2rem; color: var(--color-text-muted); font-size: 0.875rem; }
+
+  .group { margin-bottom: 2rem; }
+
+  .group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.7rem;
+  }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+  .swatch { width: 9rem; display: flex; flex-direction: column; gap: 0.35rem; }
+
+  .swatch-block {
+    height: 5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.07);
+  }
+
+  .swatch-name { font-size: 0.75rem; font-weight: 600; }
+  .swatch-var  { font-size: 0.68rem; color: var(--color-text-muted); font-family: monospace; }
+  .swatch-hex  { font-size: 0.68rem; color: var(--color-text-muted); font-family: monospace; }
+
+  hr { border: none; border-top: 1px solid var(--color-border); margin: 2rem 0; }
+
+  /* ---- in-context preview ---- */
+
+  .previews { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
+
+  .preview-column {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 0.75rem;
+    width: 18rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .accent-today   { border-left: 4px solid var(--color-column-today);   border-radius: 4px 16px 16px 4px; }
+  .accent-backlog { border-left: 4px solid var(--color-column-backlog); border-radius: 4px 16px 16px 4px; }
+
+  .preview-col-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .preview-col-header h2 { margin: 0; font-size: 1rem; }
+  .preview-col-header span { font-size: 0.85rem; color: var(--color-text-muted); }
+
+  .badge-today   { background: var(--color-column-today);   color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 99px; }
+  .badge-backlog { background: var(--color-column-backlog); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 99px; }
+
+  .preview-card {
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .preview-card:last-child { margin-bottom: 0; }
+
+  .preview-card h3 { margin: 0 0 0.25rem; font-size: 0.95rem; }
+  .preview-card p  { margin: 0 0 0.5rem; font-size: 0.8rem; color: var(--color-text-muted); }
+
+  .preview-actions { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+
+  .btn {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0.3rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: var(--color-text);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .btn:hover { background: color-mix(in srgb, var(--color-primary) 10%, white); }
+
+  .btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+  }
+
+  .btn-danger {
+    color: var(--color-danger);
+    border-color: color-mix(in srgb, var(--color-danger) 40%, white);
+  }
+
+  .new-card-form {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    width: 22rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .new-card-form h3 { margin: 0 0 0.6rem; font-size: 0.9rem; color: var(--color-text-muted); font-weight: 600; }
+
+  .form-field { display: grid; gap: 0.2rem; margin-bottom: 0.5rem; }
+  .form-field label { font-size: 0.78rem; font-weight: 600; color: var(--color-text); }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.4rem 0.5rem;
+    font: inherit;
+    font-size: 0.85rem;
+    background: var(--color-surface-elevated);
+    color: var(--color-text);
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    outline: 2px solid var(--color-focus-ring);
+    border-color: var(--color-primary);
+  }
+
+  .form-field textarea { min-height: 3.5rem; resize: vertical; }
+
+  .form-actions { display: flex; gap: 0.4rem; margin-top: 0.6rem; }
+
+  /* state chips */
+  .state-row { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .chip-primary  { background: var(--color-primary);  color: #fff; }
+  .chip-hover    { background: var(--color-primary-hover); color: #fff; }
+  .chip-success  { background: var(--color-success);  color: #fff; }
+  .chip-danger   { background: var(--color-danger);   color: #fff; }
+  .chip-muted    { background: var(--color-border);   color: var(--color-text); }
+
+  .focus-ring-demo {
+    display: inline-block;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    outline: 3px solid var(--color-focus-ring);
+  }
+</style>
+</head>
+<body>
+
+<h1>Todo Board — Green Palette</h1>
+<p class="subtitle">Emerald primary · Amber Today · Indigo Backlog</p>
+
+<div class="group">
+  <div class="group-label">Backgrounds</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#f8fafc; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08)"></div>
+      <div class="swatch-name">Page BG</div>
+      <div class="swatch-var">--color-bg</div>
+      <div class="swatch-hex">#f8fafc</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08)"></div>
+      <div class="swatch-name">Surface</div>
+      <div class="swatch-var">--color-surface</div>
+      <div class="swatch-hex">#ffffff</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08)"></div>
+      <div class="swatch-name">Elevated</div>
+      <div class="swatch-var">--color-surface-elevated</div>
+      <div class="swatch-hex">#ffffff</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#34d399"></div>
+      <div class="swatch-name">Border</div>
+      <div class="swatch-var">--color-border</div>
+      <div class="swatch-hex">#34d399</div>
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Text</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#111827"></div>
+      <div class="swatch-name">Text</div>
+      <div class="swatch-var">--color-text</div>
+      <div class="swatch-hex">#111827</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#6b7280"></div>
+      <div class="swatch-name">Muted</div>
+      <div class="swatch-var">--color-text-muted</div>
+      <div class="swatch-hex">#6b7280</div>
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Actions</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#059669"></div>
+      <div class="swatch-name">Primary</div>
+      <div class="swatch-var">--color-primary</div>
+      <div class="swatch-hex">#059669</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#047857"></div>
+      <div class="swatch-name">Primary Hover</div>
+      <div class="swatch-var">--color-primary-hover</div>
+      <div class="swatch-hex">#047857</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#10b981"></div>
+      <div class="swatch-name">Success</div>
+      <div class="swatch-var">--color-success</div>
+      <div class="swatch-hex">#10b981</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#ef4444"></div>
+      <div class="swatch-name">Danger</div>
+      <div class="swatch-var">--color-danger</div>
+      <div class="swatch-hex">#ef4444</div>
+    </div>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">Column Accents</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#f59e0b"></div>
+      <div class="swatch-name">Today</div>
+      <div class="swatch-var">--color-column-today</div>
+      <div class="swatch-hex">#f59e0b</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#6366f1"></div>
+      <div class="swatch-name">Backlog</div>
+      <div class="swatch-var">--color-column-backlog</div>
+      <div class="swatch-hex">#6366f1</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="group">
+  <div class="group-label">Interactive States</div>
+  <div class="state-row">
+    <span class="chip chip-primary">Primary</span>
+    <span class="chip chip-hover">Hover</span>
+    <span class="chip chip-success">Success</span>
+    <span class="chip chip-danger">Danger</span>
+    <span class="chip chip-muted">Muted</span>
+    <span class="focus-ring-demo">Focus ring</span>
+  </div>
+</div>
+
+<div class="group">
+  <div class="group-label">In Context</div>
+  <div class="previews">
+
+    <div class="preview-column accent-today">
+      <div class="preview-col-header">
+        <h2>Today &nbsp;<span class="badge-today">2</span></h2>
+      </div>
+      <div class="preview-card">
+        <h3>Write tests for auth module</h3>
+        <p>Cover the happy path and expired token cases.</p>
+        <div class="preview-actions">
+          <button class="btn">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+          <button class="btn">↑</button>
+          <button class="btn">↓</button>
+          <button class="btn">→ Backlog</button>
+        </div>
+      </div>
+      <div class="preview-card">
+        <h3>Review PR #42</h3>
+        <div class="preview-actions">
+          <button class="btn">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+          <button class="btn">↑</button>
+          <button class="btn">↓</button>
+          <button class="btn">→ Backlog</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-column accent-backlog">
+      <div class="preview-col-header">
+        <h2>Backlog &nbsp;<span class="badge-backlog">1</span></h2>
+      </div>
+      <div class="preview-card">
+        <h3>Refactor database layer</h3>
+        <p>Move raw SQL out of route handlers.</p>
+        <div class="preview-actions">
+          <button class="btn">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+          <button class="btn">↑</button>
+          <button class="btn">↓</button>
+          <button class="btn">→ Today</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="new-card-form">
+      <h3>Add a card</h3>
+      <div class="form-field">
+        <label>Title</label>
+        <input type="text" placeholder="What needs doing?" />
+      </div>
+      <div class="form-field">
+        <label>Notes</label>
+        <textarea placeholder="Optional markdown notes…"></textarea>
+      </div>
+      <div class="form-field">
+        <label>Column</label>
+        <select><option>Backlog</option><option>Today</option></select>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary">Add card</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

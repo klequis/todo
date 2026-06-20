@@ -81,7 +81,7 @@ export default function Home() {
 
       <Show when={board()} fallback={<p>Loading board...</p>}>
         {(data) => (
-          <section class="board-grid view-kanban">
+          <section class="board-grid">
             <For each={data()}>
               {(column) => {
                 const otherColumn = data().find((c) => c.id !== column.id);

@@ -1,22 +1,24 @@
 :root {
-  /* Color system */
-  --color-bg: #f6f3ee;
-  --color-surface: #fffdf9;
+  /* Backgrounds */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
-  --color-border: #d9d2c7;
-  --color-text: #1f2933;
-  --color-text-muted: #52606d;
+  --color-border: #34d399;
+
+  /* Text */
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
 
   /* Brand and state */
-  --color-primary: #0f766e;
-  --color-primary-hover: #0b5f59;
-  --color-focus-ring: #0f766e66;
-  --color-success: #2f855a;
-  --color-danger: #c53030;
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-focus-ring: #05996966;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
 
   /* Column accents */
-  --color-column-backlog: #7c8aa0;
-  --color-column-today: #d97706;
+  --color-column-today: #f59e0b;
+  --color-column-backlog: #6366f1;
 
   /* Spacing */
   --space-1: 0.25rem;

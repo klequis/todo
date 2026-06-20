@@ -26,6 +26,7 @@ interface Props {
 export function Column(props: Props) {
   const [dropIndicator, setDropIndicator] = createSignal<DropIndicator | null>(null);
   const [isDragTarget, setIsDragTarget] = createSignal(false);
+  const [isOpen, setIsOpen] = createSignal(props.column.id === "today");
 
   function handleColumnDragOver(e: DragEvent) {
     e.preventDefault();
@@ -81,12 +82,19 @@ export function Column(props: Props) {
   return (
     <article
       class="column"
-      classList={{ "drag-over": isDragTarget() }}
+      classList={{ "drag-over": isDragTarget(), "column--collapsed": !isOpen() }}
+      data-column-id={props.column.id}
       onDragOver={handleColumnDragOver}
       onDragLeave={handleColumnDragLeave}
       onDrop={handleColumnDrop}
     >
-      <ColumnHeader name={props.column.name} count={props.column.cards.length} />
+      <ColumnHeader
+        name={props.column.name}
+        count={props.column.cards.length}
+        columnId={props.column.id}
+        isOpen={isOpen()}
+        onToggle={() => setIsOpen((v) => !v)}
+      />
 
       <div class="column-cards">
         <Show

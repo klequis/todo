@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import { ArrowDown, ArrowRight, ArrowUp, Pencil, Trash2 } from "lucide-solid";
 import type { TodoCard } from "~/lib/queries";
 import { CardForm, type SubmitResult } from "./CardForm";
 import { MarkdownRenderer } from "./MarkdownRenderer";
@@ -40,6 +41,9 @@ export function Card(props: Props) {
     props.onDragOver(e.clientY < rect.top + rect.height / 2 ? "before" : "after");
   }
 
+  const moveLabel = () =>
+    props.columnId === "backlog" ? "Move to Today" : "Move to Backlog";
+
   return (
     <div
       class="card"
@@ -62,12 +66,52 @@ export function Card(props: Props) {
               <MarkdownRenderer source={props.card.notesMarkdown} />
             </Show>
             <div class="card-actions">
-              <button type="button" onClick={props.onStartEdit}>Edit</button>
-              <button type="button" onClick={props.onDelete}>Delete</button>
-              <button type="button" disabled={props.isFirst} onClick={props.onMoveUp}>Up</button>
-              <button type="button" disabled={props.isLast} onClick={props.onMoveDown}>Down</button>
-              <button type="button" onClick={props.onMoveToOther}>
-                {props.columnId === "backlog" ? "Move to Today" : "Move to Backlog"}
+              <button
+                type="button"
+                class="btn-icon"
+                title="Edit"
+                aria-label="Edit card"
+                onClick={props.onStartEdit}
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                type="button"
+                class="btn-icon btn-icon--danger"
+                title="Delete"
+                aria-label="Delete card"
+                onClick={props.onDelete}
+              >
+                <Trash2 size={14} />
+              </button>
+              <button
+                type="button"
+                class="btn-icon"
+                title="Move up"
+                aria-label="Move card up"
+                disabled={props.isFirst}
+                onClick={props.onMoveUp}
+              >
+                <ArrowUp size={14} />
+              </button>
+              <button
+                type="button"
+                class="btn-icon"
+                title="Move down"
+                aria-label="Move card down"
+                disabled={props.isLast}
+                onClick={props.onMoveDown}
+              >
+                <ArrowDown size={14} />
+              </button>
+              <button
+                type="button"
+                class="btn-icon"
+                title={moveLabel()}
+                aria-label={moveLabel()}
+                onClick={props.onMoveToOther}
+              >
+                <ArrowRight size={14} />
               </button>
             </div>
           </>
