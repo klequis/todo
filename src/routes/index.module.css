@@ -1,0 +1,32 @@
+.pageWrap {
+  width: min(92rem, 100% - 2rem);
+  margin: 1rem auto 2rem;
+}
+
+.boardHeader {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 1rem;
+}
+
+.boardHeader h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.boardHeader p {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.boardGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .boardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

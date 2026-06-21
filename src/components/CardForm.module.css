@@ -1,0 +1,69 @@
+.newCardForm {
+  display: grid;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+
+.newCardForm input,
+.newCardForm textarea,
+.newCardForm select {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  font: inherit;
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.newCardForm textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.editForm {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.formField {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.fieldError {
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+.cardFormActions {
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.cardFormActions label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.btnPopOut {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  margin-left: auto;
+}
+
+.btnPopOut:hover {
+  color: var(--color-text);
+  background: none;
+}

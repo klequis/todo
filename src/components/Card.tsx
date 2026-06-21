@@ -1,8 +1,9 @@
-import { Show } from "solid-js";
-import { ArrowDown, ArrowRight, ArrowUp, Pencil, Trash2 } from "lucide-solid";
+import { Show, createSignal } from "solid-js";
+import { ArrowDown, ArrowRight, ArrowUp, ChevronDown, Pencil, Trash2 } from "lucide-solid";
 import type { TodoCard } from "~/lib/queries";
 import { CardForm, type SubmitResult } from "./CardForm";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import styles from "./Card.module.css";
 
 interface Props {
   card: TodoCard;
@@ -25,6 +26,8 @@ interface Props {
 }
 
 export function Card(props: Props) {
+  const [isExpanded, setIsExpanded] = createSignal(false);
+
   function handleDragStart(e: DragEvent) {
     if (props.isEditing) { e.preventDefault(); return; }
     e.dataTransfer!.effectAllowed = "move";
@@ -46,11 +49,11 @@ export function Card(props: Props) {
 
   return (
     <div
-      class="card"
+      class={styles.card}
       classList={{
-        "card--dragging": props.isDragging,
-        "card--drop-before": props.dropPosition === "before",
-        "card--drop-after": props.dropPosition === "after",
+        [styles.dragging]: props.isDragging,
+        [styles.dropBefore]: props.dropPosition === "before",
+        [styles.dropAfter]: props.dropPosition === "after",
       }}
       draggable="true"
       onDragStart={handleDragStart}
@@ -61,59 +64,73 @@ export function Card(props: Props) {
         when={props.isEditing}
         fallback={
           <>
-            <h3>{props.card.title}</h3>
-            <Show when={props.card.notesMarkdown.trim().length > 0}>
-              <MarkdownRenderer source={props.card.notesMarkdown} />
+            <button
+              type="button"
+              class={styles.cardHeader}
+              onClick={() => setIsExpanded((v) => !v)}
+              aria-expanded={isExpanded()}
+            >
+              <ChevronDown
+                size={14}
+                class={styles.cardChevron}
+                classList={{ [styles.cardChevronCollapsed]: !isExpanded() }}
+              />
+              <h3>{props.card.title}</h3>
+            </button>
+            <Show when={isExpanded()}>
+              <Show when={props.card.notesMarkdown.trim().length > 0}>
+                <MarkdownRenderer source={props.card.notesMarkdown} />
+              </Show>
+              <div class={styles.cardActions}>
+                <button
+                  type="button"
+                  class={styles.btnIcon}
+                  title="Edit"
+                  aria-label="Edit card"
+                  onClick={props.onStartEdit}
+                >
+                  <Pencil size={14} />
+                </button>
+                <button
+                  type="button"
+                  class={`${styles.btnIcon} ${styles.btnIconDanger}`}
+                  title="Delete"
+                  aria-label="Delete card"
+                  onClick={props.onDelete}
+                >
+                  <Trash2 size={14} />
+                </button>
+                <button
+                  type="button"
+                  class={styles.btnIcon}
+                  title="Move up"
+                  aria-label="Move card up"
+                  disabled={props.isFirst}
+                  onClick={props.onMoveUp}
+                >
+                  <ArrowUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  class={styles.btnIcon}
+                  title="Move down"
+                  aria-label="Move card down"
+                  disabled={props.isLast}
+                  onClick={props.onMoveDown}
+                >
+                  <ArrowDown size={14} />
+                </button>
+                <button
+                  type="button"
+                  class={styles.btnIcon}
+                  title={moveLabel()}
+                  aria-label={moveLabel()}
+                  onClick={props.onMoveToOther}
+                >
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             </Show>
-            <div class="card-actions">
-              <button
-                type="button"
-                class="btn-icon"
-                title="Edit"
-                aria-label="Edit card"
-                onClick={props.onStartEdit}
-              >
-                <Pencil size={14} />
-              </button>
-              <button
-                type="button"
-                class="btn-icon btn-icon--danger"
-                title="Delete"
-                aria-label="Delete card"
-                onClick={props.onDelete}
-              >
-                <Trash2 size={14} />
-              </button>
-              <button
-                type="button"
-                class="btn-icon"
-                title="Move up"
-                aria-label="Move card up"
-                disabled={props.isFirst}
-                onClick={props.onMoveUp}
-              >
-                <ArrowUp size={14} />
-              </button>
-              <button
-                type="button"
-                class="btn-icon"
-                title="Move down"
-                aria-label="Move card down"
-                disabled={props.isLast}
-                onClick={props.onMoveDown}
-              >
-                <ArrowDown size={14} />
-              </button>
-              <button
-                type="button"
-                class="btn-icon"
-                title={moveLabel()}
-                aria-label={moveLabel()}
-                onClick={props.onMoveToOther}
-              >
-                <ArrowRight size={14} />
-              </button>
-            </div>
           </>
         }
       >
@@ -121,7 +138,7 @@ export function Card(props: Props) {
           mode="edit"
           initialTitle={props.card.title}
           initialNotes={props.card.notesMarkdown}
-          onSubmit={(title, notes) => props.onSaveEdit(title, notes)}
+          onSubmit={props.onSaveEdit}
           onCancel={props.onCancelEdit}
         />
       </Show>

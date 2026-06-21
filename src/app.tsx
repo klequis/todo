@@ -1,6 +1,6 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import "./app.css";
+import "./styles/app.css";
 import "./styles/variables.css";
 import { RootLayout } from "~/components/RootLayout";
 

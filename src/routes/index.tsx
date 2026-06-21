@@ -9,8 +9,8 @@ import {
   moveCardAction,
   updateCardAction,
 } from "~/lib/queries-actions";
-import { CardForm } from "~/components/CardForm";
 import { Column } from "~/components/Column";
+import styles from "./index.module.css";
 
 export default function Home() {
   const board = createAsync(() => getBoardQuery());
@@ -22,6 +22,7 @@ export default function Home() {
 
   const [editingId, setEditingId] = createSignal<number | null>(null);
   const [draggingCardId, setDraggingCardId] = createSignal<number | null>(null);
+  const [addingColumnId, setAddingColumnId] = createSignal<"backlog" | "today" | null>(null);
 
   async function handleCreate(
     title: string,
@@ -68,20 +69,19 @@ export default function Home() {
   }
 
   return (
-    <main class="page-wrap">
+    <main class={styles.pageWrap}>
       <Title>Todo Board</Title>
 
-      <section class="board-header">
+      <section class={styles.boardHeader}>
         <div>
           <h1>Todo Board</h1>
           <p>Fixed columns: Backlog and Today</p>
         </div>
-        <CardForm mode="create" onSubmit={handleCreate} />
       </section>
 
       <Show when={board()} fallback={<p>Loading board...</p>}>
         {(data) => (
-          <section class="board-grid">
+          <section class={styles.boardGrid}>
             <For each={data()}>
               {(column) => {
                 const otherColumn = data().find((c) => c.id !== column.id);
@@ -89,8 +89,16 @@ export default function Home() {
                   <Column
                     column={column}
                     otherColumnLength={otherColumn?.cards.length ?? 0}
+                    isAddingCard={addingColumnId() === column.id}
                     editingId={editingId()}
                     draggingCardId={draggingCardId()}
+                    onStartAdd={() => setAddingColumnId(column.id)}
+                    onSaveNewCard={async (title, notes) => {
+                      const result = await handleCreate(title, notes, column.id);
+                      if (result.ok) setAddingColumnId(null);
+                      return result;
+                    }}
+                    onCancelNewCard={() => setAddingColumnId(null)}
                     onDragStart={(cardId) => setDraggingCardId(cardId)}
                     onDragEnd={() => setDraggingCardId(null)}
                     onStartEdit={startEdit}

@@ -1,0 +1,106 @@
+.card {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cardHeader:hover {
+  background: none;
+}
+
+.cardChevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.cardChevronCollapsed {
+  transform: rotate(-90deg);
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.card input,
+.card textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  font: inherit;
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.card textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.card[draggable="true"] {
+  cursor: grab;
+}
+
+.dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.dropBefore {
+  box-shadow: 0 -3px 0 0 var(--color-primary);
+}
+
+.dropAfter {
+  box-shadow: 0 3px 0 0 var(--color-primary);
+}
+
+.cardActions {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.btnIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.4rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border-color: transparent;
+}
+
+.btnIcon:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary) 10%, white);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btnIconDanger {
+  color: var(--color-danger);
+}
+
+.btnIconDanger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger) 10%, white);
+  border-color: var(--color-border);
+  color: var(--color-danger);
+}

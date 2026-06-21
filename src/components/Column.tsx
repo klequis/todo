@@ -1,8 +1,10 @@
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createEffect, createSignal } from "solid-js";
+import { Portal } from "solid-js/web";
 import type { TodoCard, TodoColumn } from "~/lib/queries";
 import { Card } from "./Card";
+import { CardForm, type SubmitResult } from "./CardForm";
 import { ColumnHeader } from "./ColumnHeader";
-import type { SubmitResult } from "./CardForm";
+import styles from "./Column.module.css";
 
 interface DropIndicator {
   cardId: number;
@@ -12,8 +14,12 @@ interface DropIndicator {
 interface Props {
   column: TodoColumn;
   otherColumnLength: number;
+  isAddingCard: boolean;
   editingId: number | null;
   draggingCardId: number | null;
+  onStartAdd: () => void;
+  onSaveNewCard: (title: string, notes: string) => Promise<SubmitResult>;
+  onCancelNewCard: () => void;
   onDragStart: (cardId: number) => void;
   onDragEnd: () => void;
   onStartEdit: (card: TodoCard) => void;
@@ -27,13 +33,18 @@ export function Column(props: Props) {
   const [dropIndicator, setDropIndicator] = createSignal<DropIndicator | null>(null);
   const [isDragTarget, setIsDragTarget] = createSignal(false);
   const [isOpen, setIsOpen] = createSignal(props.column.id === "today");
+  const [isPopout, setIsPopout] = createSignal(false);
+  const [popoutTitle, setPopoutTitle] = createSignal("");
+  const [popoutNotes, setPopoutNotes] = createSignal("");
+
+  createEffect(() => {
+    if (!props.isAddingCard) setIsPopout(false);
+  });
 
   function handleColumnDragOver(e: DragEvent) {
     e.preventDefault();
     if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
     setIsDragTarget(true);
-    // Only fires when over column background — cards call stopPropagation on dragover.
-    // Clear indicator so a drop here is treated as "append at end".
     setDropIndicator(null);
   }
 
@@ -54,7 +65,6 @@ export function Column(props: Props) {
     const indicator = dropIndicator();
     setDropIndicator(null);
 
-    // Visual insert-before index: 0 = before first card, cards.length = append at end.
     let insertBeforeIdx: number;
     if (indicator) {
       const idx = props.column.cards.findIndex((c) => c.id === indicator.cardId);
@@ -63,13 +73,9 @@ export function Column(props: Props) {
       insertBeforeIdx = props.column.cards.length;
     }
 
-    // Convert to the DB targetPosition (the card's final position in the array).
-    // For same-column moves, removing the source card shifts all cards after it down by 1,
-    // so the desired "insert before idx i" corresponds to targetPosition i-1 when source < i.
     const sourceIdx = props.column.cards.findIndex((c) => c.id === cardId);
     let targetPosition: number;
     if (sourceIdx === -1) {
-      // Cross-column drag: source card is not in this column, no adjustment needed.
       targetPosition = insertBeforeIdx;
     } else {
       targetPosition = sourceIdx < insertBeforeIdx ? insertBeforeIdx - 1 : insertBeforeIdx;
@@ -79,10 +85,27 @@ export function Column(props: Props) {
     props.onMove(cardId, props.column.id, targetPosition);
   }
 
+  function handlePopOut(title: string, notes: string) {
+    setPopoutTitle(title);
+    setPopoutNotes(notes);
+    setIsPopout(true);
+  }
+
+  function handleCancelNewCard() {
+    setIsPopout(false);
+    props.onCancelNewCard();
+  }
+
+  async function handleSaveNewCard(title: string, notes: string): Promise<SubmitResult> {
+    const result = await props.onSaveNewCard(title, notes);
+    if (result.ok) setIsPopout(false);
+    return result;
+  }
+
   return (
     <article
-      class="column"
-      classList={{ "drag-over": isDragTarget(), "column--collapsed": !isOpen() }}
+      class={styles.column}
+      classList={{ [styles.dragOver]: isDragTarget(), [styles.collapsed]: !isOpen() }}
       data-column-id={props.column.id}
       onDragOver={handleColumnDragOver}
       onDragLeave={handleColumnDragLeave}
@@ -94,12 +117,26 @@ export function Column(props: Props) {
         columnId={props.column.id}
         isOpen={isOpen()}
         onToggle={() => setIsOpen((v) => !v)}
+        onAddCard={props.onStartAdd}
       />
 
-      <div class="column-cards">
+      <div class={styles.columnCards}>
+        <Show when={props.isAddingCard && !isPopout()}>
+          <CardForm
+            mode="create"
+            onSubmit={handleSaveNewCard}
+            onCancel={handleCancelNewCard}
+            onPopOut={handlePopOut}
+          />
+        </Show>
+
         <Show
           when={props.column.cards.length > 0}
-          fallback={<p class="empty-state">No cards</p>}
+          fallback={
+            <Show when={!props.isAddingCard}>
+              <p class={styles.emptyState}>No cards</p>
+            </Show>
+          }
         >
           <For each={props.column.cards}>
             {(card, index) => (
@@ -134,6 +171,28 @@ export function Column(props: Props) {
           </For>
         </Show>
       </div>
+
+      <Show when={props.isAddingCard && isPopout()}>
+        <Portal>
+          <div
+            class={styles.modalBackdrop}
+            onClick={handleCancelNewCard}
+          >
+            <div
+              class={styles.modalDialog}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CardForm
+                mode="create"
+                initialTitle={popoutTitle()}
+                initialNotes={popoutNotes()}
+                onSubmit={handleSaveNewCard}
+                onCancel={handleCancelNewCard}
+              />
+            </div>
+          </div>
+        </Portal>
+      </Show>
     </article>
   );
 }

@@ -46,12 +46,16 @@
 - Persist new order and column placement through actions.
 - Add visual drop affordances and optimistic UI feedback.
 
-11. View modes and styling
+11. View modes and styling - **Done**
 - Implement Kanban and List view layouts using the same components.
 - Persist view preference (local preference for v1 without auth).
 - Apply variables-based styling from src/styles/variables.css and polish responsive behavior.
 
 12.  Final validation and release readiness
 - Run end-to-end smoke checks across multiple devices against one shared server.
+
+
+
+**Backlog**
 - Verify spec alignment and remove out-of-scope behavior.
 - Document known limitations and next-phase items.

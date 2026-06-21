@@ -1,4 +1,5 @@
 import { marked, Renderer } from "marked";
+import styles from "./MarkdownRenderer.module.css";
 
 const renderer = new Renderer();
 
@@ -28,5 +29,5 @@ interface Props {
 
 export function MarkdownRenderer(props: Props) {
   const html = () => stripDangerous(marked.parse(props.source) as string);
-  return <div class="markdown-body" innerHTML={html()} />;
+  return <div class={styles.markdownBody} innerHTML={html()} />;
 }
