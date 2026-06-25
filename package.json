@@ -10,11 +10,11 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "2.0.0-alpha.2",
     "@solidjs/vite-plugin-nitro-2": "^0.1.0",
-    "better-sqlite3": "^12.11.1",
     "lucide-solid": "^1.21.0",
     "marked": "^18.0.5",
     "solid-js": "^1.9.5",
@@ -25,7 +25,6 @@
     "node": ">=22"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
     "vite-plugin-mkcert": "^2.1.0",
     "vite-plugin-qrcode": "^0.4.1",
     "vitest": "^4.1.9"

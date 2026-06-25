@@ -32,7 +32,7 @@ export const createCardAction = action(async (data: FormData) => {
   }
 
   const { createCard } = await import("./queries");
-  const card = createCard(validated.data);
+  const card = await createCard(validated.data);
 
   return {
     ok: true as const,
@@ -63,7 +63,7 @@ export const updateCardAction = action(async (data: FormData) => {
   }
 
   const { updateCard } = await import("./queries");
-  const card = updateCard(validated.data);
+  const card = await updateCard(validated.data);
   return {
     ok: true as const,
     card,
@@ -85,7 +85,7 @@ export const deleteCardAction = action(async (data: FormData) => {
   }
 
   const { deleteCard } = await import("./queries");
-  const deleted = deleteCard(validated.data.id);
+  const deleted = await deleteCard(validated.data.id);
   return {
     ok: true as const,
     deleted,
@@ -109,7 +109,7 @@ export const moveCardAction = action(async (data: FormData) => {
   }
 
   const { moveCard } = await import("./queries");
-  const card = moveCard(validated.data);
+  const card = await moveCard(validated.data);
   return {
     ok: true as const,
     card,

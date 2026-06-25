@@ -4,9 +4,9 @@ export default defineConfig({
   test: {
     environment: "node",
     env: {
-      VITE_DATA_ENV: "test",
-      TODO_DB_PATH: "data/test/todo.test.db",
+      TURSO_DATABASE_URL: "file:data/test/todo.test.db",
     },
+    setupFiles: ["src/lib/test-setup.ts"],
     include: ["src/**/*.test.ts"],
     exclude: ["doc/**", "node_modules/**"],
   },

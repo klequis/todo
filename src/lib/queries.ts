@@ -1,4 +1,4 @@
-import db from "./db";
+import client from "./db";
 import type {
   CardCreateInput,
   CardMoveInput,
@@ -34,44 +34,6 @@ type CardRow = {
   position: number;
 };
 
-const getColumnsStmt = db.prepare(
-  "SELECT id, name, position FROM columns_tbl ORDER BY position ASC"
-);
-const getCardsStmt = db.prepare(
-  "SELECT id, title, notes_markdown, column_id, position FROM cards ORDER BY column_id ASC, position ASC, id ASC"
-);
-const getCardByIdStmt = db.prepare(
-  "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?"
-);
-const updateCardStmt = db.prepare(
-  "UPDATE cards SET title = ?, notes_markdown = ? WHERE id = ?"
-);
-const deleteCardStmt = db.prepare("DELETE FROM cards WHERE id = ?");
-const getColumnCountStmt = db.prepare(
-  "SELECT COUNT(*) as count FROM cards WHERE column_id = ?"
-);
-const shiftCardsStmt = db.prepare(
-  "UPDATE cards SET position = position + 1 WHERE column_id = ? AND position >= ?"
-);
-const compactCardsStmt = db.prepare(
-  "UPDATE cards SET position = position - 1 WHERE column_id = ? AND position > ?"
-);
-const shiftRangeUpStmt = db.prepare(
-  "UPDATE cards SET position = position + 1 WHERE column_id = ? AND position >= ? AND position < ?"
-);
-const shiftRangeDownStmt = db.prepare(
-  "UPDATE cards SET position = position - 1 WHERE column_id = ? AND position > ? AND position <= ?"
-);
-const updateCardPositionStmt = db.prepare(
-  "UPDATE cards SET position = ? WHERE id = ?"
-);
-const updateCardColumnAndPositionStmt = db.prepare(
-  "UPDATE cards SET column_id = ?, position = ? WHERE id = ?"
-);
-const insertCardStmt = db.prepare(
-  "INSERT INTO cards (title, notes_markdown, column_id, position) VALUES (?, ?, ?, ?)"
-);
-
 function mapCard(row: CardRow): TodoCard {
   return {
     id: row.id,
@@ -82,9 +44,14 @@ function mapCard(row: CardRow): TodoCard {
   };
 }
 
-export function getBoard(): TodoColumn[] {
-  const columns = getColumnsStmt.all() as ColumnRow[];
-  const cards = (getCardsStmt.all() as CardRow[]).map(mapCard);
+export async function getBoard(): Promise<TodoColumn[]> {
+  const [columnsResult, cardsResult] = await Promise.all([
+    client.execute("SELECT id, name, position FROM columns_tbl ORDER BY position ASC"),
+    client.execute("SELECT id, title, notes_markdown, column_id, position FROM cards ORDER BY column_id ASC, position ASC, id ASC"),
+  ]);
+
+  const columns = columnsResult.rows as unknown as ColumnRow[];
+  const cards = (cardsResult.rows as unknown as CardRow[]).map(mapCard);
 
   return columns.map((column) => ({
     id: column.id,
@@ -94,111 +61,179 @@ export function getBoard(): TodoColumn[] {
   }));
 }
 
-export function createCard(input: CardCreateInput): TodoCard {
-  const tx = db.transaction((payload: CardCreateInput) => {
-    const countRow = getColumnCountStmt.get(payload.columnId) as { count: number };
-    const count = countRow.count;
+export async function createCard(input: CardCreateInput): Promise<TodoCard> {
+  const tx = await client.transaction("write");
+  try {
+    const countResult = await tx.execute({
+      sql: "SELECT COUNT(*) as count FROM cards WHERE column_id = ?",
+      args: [input.columnId],
+    });
+    const count = Number((countResult.rows[0] as unknown as { count: number }).count);
 
-    const requestedPos = payload.position ?? count;
+    const requestedPos = input.position ?? count;
     const nextPos = Math.max(0, Math.min(requestedPos, count));
 
-    shiftCardsStmt.run(payload.columnId, nextPos);
-    const result = insertCardStmt.run(
-      payload.title,
-      payload.notesMarkdown,
-      payload.columnId,
-      nextPos
-    );
+    await tx.execute({
+      sql: "UPDATE cards SET position = position + 1 WHERE column_id = ? AND position >= ?",
+      args: [input.columnId, nextPos],
+    });
 
-    const created = getCardByIdStmt.get(result.lastInsertRowid) as CardRow | undefined;
-    if (!created) {
-      throw new Error("Failed to create card");
-    }
+    const insertResult = await tx.execute({
+      sql: "INSERT INTO cards (title, notes_markdown, column_id, position) VALUES (?, ?, ?, ?)",
+      args: [input.title, input.notesMarkdown, input.columnId, nextPos],
+    });
 
+    const cardResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [insertResult.lastInsertRowid!],
+    });
+
+    await tx.commit();
+
+    const created = cardResult.rows[0] as unknown as CardRow | undefined;
+    if (!created) throw new Error("Failed to create card");
     return mapCard(created);
-  });
-
-  return tx(input);
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
 }
 
-export function updateCard(input: CardUpdateInput): TodoCard {
-  const tx = db.transaction((payload: CardUpdateInput) => {
-    const existing = getCardByIdStmt.get(payload.id) as CardRow | undefined;
-    if (!existing) {
-      throw new Error("Card not found");
-    }
+export async function updateCard(input: CardUpdateInput): Promise<TodoCard> {
+  const tx = await client.transaction("write");
+  try {
+    const existingResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [input.id],
+    });
+    const existing = existingResult.rows[0] as unknown as CardRow | undefined;
+    if (!existing) throw new Error("Card not found");
 
-    const nextTitle = payload.title ?? existing.title;
-    const nextNotes = payload.notesMarkdown ?? existing.notes_markdown;
-    updateCardStmt.run(nextTitle, nextNotes, payload.id);
+    const nextTitle = input.title ?? existing.title;
+    const nextNotes = input.notesMarkdown ?? existing.notes_markdown;
 
-    const updated = getCardByIdStmt.get(payload.id) as CardRow | undefined;
-    if (!updated) {
-      throw new Error("Failed to update card");
-    }
+    await tx.execute({
+      sql: "UPDATE cards SET title = ?, notes_markdown = ? WHERE id = ?",
+      args: [nextTitle, nextNotes, input.id],
+    });
 
+    const updatedResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [input.id],
+    });
+
+    await tx.commit();
+
+    const updated = updatedResult.rows[0] as unknown as CardRow | undefined;
+    if (!updated) throw new Error("Failed to update card");
     return mapCard(updated);
-  });
-
-  return tx(input);
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
 }
 
-export function deleteCard(id: number): boolean {
-  const tx = db.transaction((cardId: number) => {
-    const existing = getCardByIdStmt.get(cardId) as CardRow | undefined;
+export async function deleteCard(id: number): Promise<boolean> {
+  const tx = await client.transaction("write");
+  try {
+    const existingResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [id],
+    });
+    const existing = existingResult.rows[0] as unknown as CardRow | undefined;
     if (!existing) {
+      await tx.rollback();
       return false;
     }
 
-    deleteCardStmt.run(cardId);
-    compactCardsStmt.run(existing.column_id, existing.position);
-    return true;
-  });
+    await tx.execute({ sql: "DELETE FROM cards WHERE id = ?", args: [id] });
+    await tx.execute({
+      sql: "UPDATE cards SET position = position - 1 WHERE column_id = ? AND position > ?",
+      args: [existing.column_id, existing.position],
+    });
 
-  return tx(id);
+    await tx.commit();
+    return true;
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
 }
 
-export function moveCard(input: CardMoveInput): TodoCard {
-  const tx = db.transaction((payload: CardMoveInput) => {
-    const existing = getCardByIdStmt.get(payload.id) as CardRow | undefined;
-    if (!existing) {
-      throw new Error("Card not found");
-    }
+export async function moveCard(input: CardMoveInput): Promise<TodoCard> {
+  const tx = await client.transaction("write");
+  try {
+    const existingResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [input.id],
+    });
+    const existing = existingResult.rows[0] as unknown as CardRow | undefined;
+    if (!existing) throw new Error("Card not found");
 
-    if (existing.column_id === payload.targetColumnId) {
-      const countRow = getColumnCountStmt.get(existing.column_id) as { count: number };
-      const maxPos = Math.max(0, countRow.count - 1);
-      const targetPos = Math.max(0, Math.min(payload.targetPosition, maxPos));
+    if (existing.column_id === input.targetColumnId) {
+      const countResult = await tx.execute({
+        sql: "SELECT COUNT(*) as count FROM cards WHERE column_id = ?",
+        args: [existing.column_id],
+      });
+      const maxPos = Math.max(0, Number((countResult.rows[0] as unknown as { count: number }).count) - 1);
+      const targetPos = Math.max(0, Math.min(input.targetPosition, maxPos));
 
       if (targetPos < existing.position) {
-        shiftRangeUpStmt.run(existing.column_id, targetPos, existing.position);
-        updateCardPositionStmt.run(targetPos, existing.id);
+        await tx.execute({
+          sql: "UPDATE cards SET position = position + 1 WHERE column_id = ? AND position >= ? AND position < ?",
+          args: [existing.column_id, targetPos, existing.position],
+        });
+        await tx.execute({
+          sql: "UPDATE cards SET position = ? WHERE id = ?",
+          args: [targetPos, existing.id],
+        });
       } else if (targetPos > existing.position) {
-        shiftRangeDownStmt.run(existing.column_id, existing.position, targetPos);
-        updateCardPositionStmt.run(targetPos, existing.id);
+        await tx.execute({
+          sql: "UPDATE cards SET position = position - 1 WHERE column_id = ? AND position > ? AND position <= ?",
+          args: [existing.column_id, existing.position, targetPos],
+        });
+        await tx.execute({
+          sql: "UPDATE cards SET position = ? WHERE id = ?",
+          args: [targetPos, existing.id],
+        });
       }
     } else {
-      compactCardsStmt.run(existing.column_id, existing.position);
+      await tx.execute({
+        sql: "UPDATE cards SET position = position - 1 WHERE column_id = ? AND position > ?",
+        args: [existing.column_id, existing.position],
+      });
 
-      const targetCountRow = getColumnCountStmt.get(payload.targetColumnId) as {
-        count: number;
-      };
+      const targetCountResult = await tx.execute({
+        sql: "SELECT COUNT(*) as count FROM cards WHERE column_id = ?",
+        args: [input.targetColumnId],
+      });
       const targetPos = Math.max(
         0,
-        Math.min(payload.targetPosition, targetCountRow.count)
+        Math.min(input.targetPosition, Number((targetCountResult.rows[0] as unknown as { count: number }).count))
       );
 
-      shiftCardsStmt.run(payload.targetColumnId, targetPos);
-      updateCardColumnAndPositionStmt.run(payload.targetColumnId, targetPos, existing.id);
+      await tx.execute({
+        sql: "UPDATE cards SET position = position + 1 WHERE column_id = ? AND position >= ?",
+        args: [input.targetColumnId, targetPos],
+      });
+      await tx.execute({
+        sql: "UPDATE cards SET column_id = ?, position = ? WHERE id = ?",
+        args: [input.targetColumnId, targetPos, existing.id],
+      });
     }
 
-    const moved = getCardByIdStmt.get(payload.id) as CardRow | undefined;
-    if (!moved) {
-      throw new Error("Failed to move card");
-    }
+    const movedResult = await tx.execute({
+      sql: "SELECT id, title, notes_markdown, column_id, position FROM cards WHERE id = ?",
+      args: [input.id],
+    });
 
+    await tx.commit();
+
+    const moved = movedResult.rows[0] as unknown as CardRow | undefined;
+    if (!moved) throw new Error("Failed to move card");
     return mapCard(moved);
-  });
-
-  return tx(input);
+  } catch (e) {
+    await tx.rollback();
+    throw e;
+  }
 }
