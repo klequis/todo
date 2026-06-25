@@ -1,5 +1,37 @@
 # Change Log
 
+## 2026-06-25 14:15 — Fix Nitro preset not activating on Vercel
+
+`vite.config.ts`: changed preset detection from `process.env.VERCEL` to `process.env.NITRO_PRESET`.
+
+`@solidjs/vite-plugin-nitro-2` hardcodes `preset: "node-server"` in its internal config and
+then spreads user config on top. This means an explicit `{ preset: "vercel" }` in user config
+does override it — but only if the condition fires. `VERCEL=1` is a Vercel system env var that
+is not automatically exposed to the build process, so the check was always falsy.
+
+`NITRO_PRESET=vercel` is a custom env var added to the Vercel project (Production environment).
+Custom env vars ARE available during builds. Reading it via `process.env.NITRO_PRESET` and
+passing `{ preset: process.env.NITRO_PRESET }` to the plugin correctly overrides the hardcoded
+`node-server` preset.
+
+---
+
+## 2026-06-25 13:30 — Vercel deployment prep
+
+| File | Change |
+|---|---|
+| `vite.config.ts` | Nitro uses `preset: "vercel"` when `VERCEL=1` env var is present (set automatically by Vercel during build); falls back to `node-server` locally |
+| `package.json` | Added `migrate:staging` and `migrate:prod` scripts; removed stale `better-sqlite3` from `pnpm.onlyBuiltDependencies` |
+| `doc/first-deploy/vercel-initial-setup-and-deployment.md` | New — step-by-step deployment guide with [YOU]/[CLAUDE] ownership labels |
+
+`migrate:staging` and `migrate:prod` use `node_modules/tsx/dist/cli.mjs` rather than
+`node_modules/.bin/**tsx**` for the same reason as `vite.js` — the `.bin/` entry is a bash
+shell script that Node cannot execute directly.
+
+Turso prod database (`todo-prod`) created and migration applied via `pnpm migrate:prod`.
+
+---
+
 ## 2026-06-25 12:09 — Add dev:staging script
 
 Added `dev:staging` script to `package.json` to run the dev server against the Turso staging
