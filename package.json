@@ -3,11 +3,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "dev:staging": "node --env-file=.env.staging node_modules/vite/bin/vite.js dev",
     "build": "vite build",
     "start": "vite start",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
@@ -25,6 +27,7 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "tsx": "^4.22.4",
     "vite-plugin-mkcert": "^2.1.0",
     "vite-plugin-qrcode": "^0.4.1",
     "vitest": "^4.1.9"

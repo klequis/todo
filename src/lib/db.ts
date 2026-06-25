@@ -1,6 +1,6 @@
 import { createClient } from "@libsql/client";
 
-const url = process.env.TURSO_DATABASE_URL ?? "file:data/dev/todo.db";
+const url = process.env.TURSO_DATABASE_URL ?? `file:${process.cwd()}/data/dev/todo.db`;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
 const client = createClient({ url, authToken });
