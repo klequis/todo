@@ -1,5 +1,6 @@
 import { For, Show, createEffect, createSignal } from "solid-js";
-import { Portal } from "solid-js/web";
+import { createMediaQuery } from "@solid-primitives/media";
+import { Dialog } from "@kobalte/core/dialog";
 import type { TodoCard, TodoColumn } from "~/lib/queries";
 import { Card } from "./Card";
 import { CardForm, type SubmitResult } from "./CardForm";
@@ -33,12 +34,17 @@ export function Column(props: Props) {
   const [dropIndicator, setDropIndicator] = createSignal<DropIndicator | null>(null);
   const [isDragTarget, setIsDragTarget] = createSignal(false);
   const [isOpen, setIsOpen] = createSignal(props.column.id === "today");
-  const [isPopout, setIsPopout] = createSignal(false);
-  const [popoutTitle, setPopoutTitle] = createSignal("");
-  const [popoutNotes, setPopoutNotes] = createSignal("");
+  const isMobile = createMediaQuery("(max-width: 899px)");
+  const [isDialogOpen, setIsDialogOpen] = createSignal(false);
+  const [dialogTitle, setDialogTitle] = createSignal("");
+  const [dialogNotes, setDialogNotes] = createSignal("");
 
   createEffect(() => {
-    if (!props.isAddingCard) setIsPopout(false);
+    if (!props.isAddingCard) setIsDialogOpen(false);
+  });
+
+  createEffect(() => {
+    if (props.isAddingCard && isMobile() && !isDialogOpen()) setIsDialogOpen(true);
   });
 
   function handleColumnDragOver(e: DragEvent) {
@@ -86,19 +92,19 @@ export function Column(props: Props) {
   }
 
   function handlePopOut(title: string, notes: string) {
-    setPopoutTitle(title);
-    setPopoutNotes(notes);
-    setIsPopout(true);
+    setDialogTitle(title);
+    setDialogNotes(notes);
+    setIsDialogOpen(true);
   }
 
   function handleCancelNewCard() {
-    setIsPopout(false);
+    setIsDialogOpen(false);
     props.onCancelNewCard();
   }
 
   async function handleSaveNewCard(title: string, notes: string): Promise<SubmitResult> {
     const result = await props.onSaveNewCard(title, notes);
-    if (result.ok) setIsPopout(false);
+    if (result.ok) setIsDialogOpen(false);
     return result;
   }
 
@@ -121,7 +127,7 @@ export function Column(props: Props) {
       />
 
       <div class={styles.columnCards}>
-        <Show when={props.isAddingCard && !isPopout()}>
+        <Show when={props.isAddingCard && !isDialogOpen()}>
           <CardForm
             mode="create"
             onSubmit={handleSaveNewCard}
@@ -172,27 +178,21 @@ export function Column(props: Props) {
         </Show>
       </div>
 
-      <Show when={props.isAddingCard && isPopout()}>
-        <Portal>
-          <div
-            class={styles.modalBackdrop}
-            onClick={handleCancelNewCard}
-          >
-            <div
-              class={styles.modalDialog}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CardForm
-                mode="create"
-                initialTitle={popoutTitle()}
-                initialNotes={popoutNotes()}
-                onSubmit={handleSaveNewCard}
-                onCancel={handleCancelNewCard}
-              />
-            </div>
-          </div>
-        </Portal>
-      </Show>
+      <Dialog open={isDialogOpen()} onOpenChange={(open) => { if (!open) handleCancelNewCard(); }} modal>
+        <Dialog.Portal>
+          <Dialog.Overlay class={styles.dialogOverlay} />
+          <Dialog.Content class={styles.dialogContent}>
+            <Dialog.Title class={styles.srOnly}>New card</Dialog.Title>
+            <CardForm
+              mode="create"
+              initialTitle={dialogTitle()}
+              initialNotes={dialogNotes()}
+              onSubmit={handleSaveNewCard}
+              onCancel={handleCancelNewCard}
+            />
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog>
     </article>
   );
 }

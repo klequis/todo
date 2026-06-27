@@ -14,7 +14,9 @@
     "migrate:prod": "node --env-file=.env.production node_modules/tsx/dist/cli.mjs scripts/migrate.ts"
   },
   "dependencies": {
+    "@kobalte/core": "^0.13.11",
     "@libsql/client": "^0.17.4",
+    "@solid-primitives/media": "^2.3.5",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "2.0.0-alpha.2",
