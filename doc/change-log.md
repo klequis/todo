@@ -1,5 +1,11 @@
 # Change Log
 
+## 2026-06-27 — Remove empty aws-sst-deploy.md
+
+Deleted `doc/aws-sst-deploy.md` — the file was empty (placeholder only, no content).
+
+---
+
 ## 2026-06-25 14:15 — Fix Nitro preset not activating on Vercel
 
 `vite.config.ts`: changed preset detection from `process.env.VERCEL` to `process.env.NITRO_PRESET`.
