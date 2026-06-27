@@ -1,5 +1,13 @@
 # Change Log
 
+## 2026-06-27 — Mobile modal and accessible dialog
+
+- `@solid-primitives/media` and `@kobalte/core` added as dependencies.
+- `src/components/Column.tsx`: replaced hand-rolled Portal/backdrop modal with a Kobalte `Dialog` (focus trapping, Escape-to-close, ARIA). On mobile (≤899px), clicking '+' in a column header opens the dialog immediately via a reactive `createMediaQuery` signal; on desktop the existing inline form + pop-out button flow is preserved.
+- `src/components/Column.module.css`: replaced `.modalBackdrop`/`.modalDialog` with `.dialogOverlay`/`.dialogContent`; dialog is full-screen on mobile, centered panel on desktop.
+
+---
+
 ## 2026-06-27 — Remove empty aws-sst-deploy.md
 
 Deleted `doc/aws-sst-deploy.md` — the file was empty (placeholder only, no content).
