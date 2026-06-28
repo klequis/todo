@@ -79,7 +79,7 @@ export function formatTime(hhmm: string | null | undefined): string {
   const m = mStr ?? "00";
   const period = h >= 12 ? "PM" : "AM";
   const hour = h % 12 === 0 ? 12 : h % 12;
-  return `${hour}:${m} ${period}`;
+  return `${String(hour).padStart(2, "0")}:${m} ${period}`;
 }
 
 export function formatDisplayDate(isoDate: string): string {

@@ -14,6 +14,9 @@ importers:
       '@libsql/client':
         specifier: ^0.17.4
         version: 0.17.4
+      '@solid-primitives/input-mask':
+        specifier: ^0.3.1
+        version: 0.3.1(solid-js@1.9.11)
       '@solid-primitives/media':
         specifier: ^2.3.5
         version: 2.3.5(solid-js@1.9.11)
@@ -1156,6 +1159,14 @@ packages:
     resolution: {integrity: sha512-nwRV558mIabl4yVAhZKY8cb6G+O1F0M6Z75ttTu5hk+SxdOnKSGj+eetDIu7Oax1P138ZdUU01qnBPR8rnxaEA==}
     peerDependencies:
       solid-js: ^1.6.12
+
+  '@solid-primitives/input-mask@0.3.1':
+    resolution: {integrity: sha512-JHsBdY1hP5MqCf71RL5NiZYxADJwUNvF7WLYnt1ZzaJiyOad4wrCnMadK1+o2zYqR4j7lp6Nq/PQw4eVMTzlvQ==}
+    peerDependencies:
+      solid-js: ^1.6.12
+    peerDependenciesMeta:
+      solid-js:
+        optional: true
 
   '@solid-primitives/keyed@1.5.3':
     resolution: {integrity: sha512-zNadtyYBhJSOjXtogkGHmRxjGdz9KHc8sGGVAGlUABkE8BED2tbIZoxkwSqzOwde8OcUEH0bb5DLZUWIMvyBSA==}
@@ -4013,6 +4024,10 @@ snapshots:
   '@solid-primitives/event-listener@2.4.5(solid-js@1.9.11)':
     dependencies:
       '@solid-primitives/utils': 6.4.0(solid-js@1.9.11)
+      solid-js: 1.9.11
+
+  '@solid-primitives/input-mask@0.3.1(solid-js@1.9.11)':
+    optionalDependencies:
       solid-js: 1.9.11
 
   '@solid-primitives/keyed@1.5.3(solid-js@1.9.11)':
