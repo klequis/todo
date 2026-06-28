@@ -33,3 +33,30 @@ export type CardCreateInput = z.infer<typeof CardCreateSchema>;
 export type CardUpdateInput = z.infer<typeof CardUpdateSchema>;
 export type CardDeleteInput = z.infer<typeof CardDeleteSchema>;
 export type CardMoveInput = z.infer<typeof CardMoveSchema>;
+
+// Appointments
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD");
+const time24 = z.string().regex(/^\d{2}:\d{2}$/, "Must be HH:MM").nullable().optional();
+
+export const AppointmentCreateSchema = z.object({
+  date: isoDate,
+  time: time24,
+  description: z.string().max(500).optional(),
+  location: z.string().max(200).optional(),
+});
+
+export const AppointmentUpdateSchema = z.object({
+  id: z.string().min(1),
+  date: isoDate.optional(),
+  time: time24,
+  description: z.string().max(500).optional(),
+  location: z.string().max(200).optional(),
+});
+
+export const AppointmentDeleteSchema = z.object({
+  id: z.string().min(1),
+});
+
+export type AppointmentCreateInput = z.infer<typeof AppointmentCreateSchema>;
+export type AppointmentUpdateInput = z.infer<typeof AppointmentUpdateSchema>;
+export type AppointmentDeleteInput = z.infer<typeof AppointmentDeleteSchema>;

@@ -1,0 +1,32 @@
+.row:hover {
+  background: var(--color-surface-hover, #f9fafb);
+}
+
+.cell {
+  padding: 6px 8px;
+  font-size: 0.875rem;
+  color: var(--color-text, #374151);
+  vertical-align: middle;
+}
+
+.actions {
+  padding: 4px 8px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 4px;
+  color: var(--color-text-muted, #9ca3af);
+  border-radius: 3px;
+  line-height: 0;
+  transition: color 0.1s, background 0.1s;
+}
+
+.iconBtn:hover {
+  color: var(--color-text, #374151);
+  background: var(--color-surface-hover, #f3f4f6);
+}

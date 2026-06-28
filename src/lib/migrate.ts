@@ -44,4 +44,32 @@ export async function runMigration(client: Client): Promise<void> {
       ('backlog', 'Backlog', 0),
       ('today', 'Today', 1)
   `);
+
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS appointments (
+      id          TEXT    PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+      date        TEXT    NOT NULL,
+      time        TEXT,
+      description TEXT,
+      location    TEXT,
+      created_at  TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+      updated_at  TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    )
+  `);
+
+  await client.execute(`
+    CREATE INDEX IF NOT EXISTS idx_appointments_date
+      ON appointments(date)
+  `);
+
+  await client.execute(`
+    CREATE TRIGGER IF NOT EXISTS appointments_updated_at
+      AFTER UPDATE ON appointments
+      FOR EACH ROW
+      BEGIN
+        UPDATE appointments
+        SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        WHERE id = OLD.id;
+      END
+  `);
 }

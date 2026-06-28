@@ -10,7 +10,7 @@ export function RootLayout(props: RouteSectionProps) {
       <div class={styles.appShell}>
         <header class={styles.topNav}>
           <a href="/">Board</a>
-          <a href="/about">About</a>
+          <a href="/agenda">Agenda</a>
         </header>
         <Suspense>{props.children}</Suspense>
       </div>
